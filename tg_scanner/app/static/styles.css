@@ -1,3 +1,58 @@
 .vis-network {
     background-color: #222222;
 }
+
+.wrap{
+    --vertical-space: 40px;
+    --horizontal-space: 40px;
+    z-index: 1000; 
+    position: absolute; 
+    top: var(--vertical-space); 
+    right:var(--horizontal-space);  
+    /* pointer-events: none; */
+    width: 350px;
+    height: 300px;
+    max-height: calc(100% - var(--vertical-space) * 2 - 20px);
+    max-width: calc(100% - var(--horizontal-space) * 2 - 20px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    font-size: 11px;
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+}
+
+.wrap{
+    background-color: rgba(255, 255, 255, 0.41);
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    mix-blend-mode: difference;
+    border: 1px solid white;
+    box-shadow: 0 0 10px 0px rgba(255,255,255,0.4)
+}
+
+#node-list{
+    overflow-y: auto;
+    height: auto;
+    padding-left: 0px;
+    margin: 0;
+    padding: 10px;  
+    /* border-radius: 10px; */
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-bottom: -10px;
+    border-top: 1px solid white;
+    /* border: 1px solid white; */
+}
+
+#node-list li {
+    margin-left: 10px;
+}
+
+.title{
+    font-weight: 600;
+    font-size: 13px;
+}

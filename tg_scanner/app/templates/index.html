@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <title>Telegram Graph</title>
 </head>
 <body style="margin:0">
@@ -23,19 +24,30 @@
 <div id="graph"></div>
 
 
-<div style="z-index: 1000; position: absolute; top: 7.5vh; right: 5em; pointer-events: none;width: 20%;
-height: 85vh;
-overflow: hidden;">
+<div class="wrap" >
 
-    Start date time: <i id="date-time"></i>
-    <br>
-    Depth: <i id="depth"></i>
-    <br>
-    Node list: <i id="node-count-left">0</i>/<i id="node-count-right">0</i>
-    <br>
-    Keywords: $PEPE, $BRETT, $ANDY, $LANDWOLF,
-    $TURBO, $MYRO, $HOPPY, $WIF,
-    $MANEKI, $FOXY, $MAGA, $LFGO, $POLA
+    <div class="">
+        <span class="title">
+            Start date time: 
+        </span> <i id="date-time"></i>
+    </div>
+    <div class="">
+        <span class="title">
+            Depth:
+        </span> <i id="depth"></i>
+    </div>
+    <div>
+        <span class="title">
+            Keywords:
+        </span> $PEPE, $BRETT, $ANDY, $LANDWOLF,
+        $TURBO, $MYRO, $HOPPY, $WIF,
+        $MANEKI, $FOXY, $MAGA, $LFGO, $POLA
+    </div>
+    <div class="">
+        <span class="title">
+            Node list: 
+        </span> <i id="node-count-left">0</i>/<i id="node-count-right">0</i>
+    </div>
 
     <ul id="node-list"></ul>
 </div>
