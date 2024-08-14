@@ -1,19 +1,68 @@
 import asyncio
 import datetime
+import json
+import math
 import random
 import threading
-import math
 from time import sleep
-from telethon import TelegramClient, errors, functions
+
+import numpy as np
+from telethon.errors import ChannelPrivateError, rpcerrorlist
+from telethon.sync import TelegramClient
+from telethon.tl.functions.messages import GetHistoryRequest
+
+
+def get_history(ch, dt):
+    return GetHistoryRequest(
+        peer=ch,
+        offset_id=0,
+        offset_date=dt,
+        add_offset=0,
+        limit=100,
+        max_id=0,
+        min_id=0,
+        hash=0
+    )
+
+
+def color_gradient(x):
+    return 255 * x, 0, 255 - 255 * x
+
+
+def hsv_to_rgb(h, s, v):
+    h_i = int(h * 6)
+    f = h * 6 - h_i
+    p = v * (1 - s)
+    q = v * (1 - f * s)
+    t = v * (1 - (1 - f) * s)
+    if h_i == 0:
+        r, g, b = v, t, p
+    elif h_i == 1:
+        r, g, b = q, v, p
+    elif h_i == 2:
+        r, g, b = p, v, t
+    elif h_i == 3:
+        r, g, b = p, q, v
+    elif h_i == 4:
+        r, g, b = t, p, v
+    elif h_i == 5:
+        r, g, b = v, p, q
+    else:
+        r, g, b = 0, 0, 0
+    return int(r * 256), int(g * 256), int(b * 256)
+
 
 class TGScanner(threading.Thread):
-    api_id = 27426964
-    api_hash = 'dd1ee07cbf165e7bdd64d85361f7b209'
+    api_id = 22222967
+    api_hash = 'fe6a3f18e0ceb89afd2527b7ff0f1c47'
+
+    start_channel = "t.me/disclosetv"
 
     max_depth = 4
-    from_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1008)
+    from_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=18)
+
     golden_ratio_conjugate = 0.618033988749895
-    h = random.random()
+    h = random.randint(0, 256)
 
     def __init__(self):
         super().__init__()
@@ -25,178 +74,215 @@ class TGScanner(threading.Thread):
     def next_color(self):
         self.h += self.golden_ratio_conjugate
         self.h %= 1
-        return self.hsv_to_rgb(self.h, .5, .95)
-
-    @staticmethod
-    def hsv_to_rgb(h, s, v):
-        h_i = int(h * 6)
-        f = h * 6 - h_i
-        p = v * (1 - s)
-        q = v * (1 - f * s)
-        t = v * (1 - (1 - f) * s)
-        if h_i == 0:
-            r, g, b = v, t, p
-        elif h_i == 1:
-            r, g, b = q, v, p
-        elif h_i == 2:
-            r, g, b = p, v, t
-        elif h_i == 3:
-            r, g, b = p, q, v
-        elif h_i == 4:
-            r, g, b = t, p, v
-        elif h_i == 5:
-            r, g, b = v, p, q
-        else:
-            r, g, b = 0, 0, 0
-        return int(r * 256), int(g * 256), int(b * 256)
+        return hsv_to_rgb(self.h, .5, .95)
 
     async def fetch_channel(self, client, channel_username):
         try:
             return await client.get_entity(channel_username)
-        except errors.ChannelPrivateError:
+        except ChannelPrivateError:
             print(f"Cannot access channel: {channel_username}")
         except Exception as e:
             print(f"Error fetching channel {channel_username}: {e}")
 
-    async def scan(self, channel_list):
+    async def scan(self):
         async with TelegramClient('anon', self.api_id, self.api_hash) as client:
+
             self.set_text({'id': 'date-time', 'text': self.from_date.strftime("%d-%m-%Y %H:%M:%S")})
             self.set_text({'id': 'depth', 'text': self.max_depth})
 
-            start_channel = await client.get_entity(channel_list[0])
-            channels_dict = {start_channel.id: self.init_channel_dict(start_channel, 0)}
+            channels_usernames = [
+                "t.me/disclosetv",
+                "t.me/Govsg",
+                "t.me/TheBabylonBee",
+                "t.me/Project_Veritas",
+                "t.me/vertigo_world_news",
+                "t.me/nytimes",
+                "t.me/georgenews",
+                "t.me/Breaking911",
+                "t.me/WeTheMedia",
+                "t.me/hnaftali",
+                "t.me/OANNTV",
+                "t.me/gatewaypunditofficial",
+                "t.me/rtnews",
+                "t.me/WarMonitors",
+                "t.me/TommyRobinsonNews",
+                "t.me/TheBlazeTV"
+            ]
+
+            channels = []
+            for username in channels_usernames:
+                ch = await self.fetch_channel(client, username)
+                if ch:
+                    channels.append(ch)
+
+            start_channel = await client.get_entity(self.start_channel)
+            channels.append(start_channel)
+
+            channels_dict = {}
+            channels_dict[start_channel.id] = {
+                'out': [],
+                'in': [],
+                'msg_count': -1,
+                'users': {},
+                'title': start_channel.title,
+                'depth': 0,
+                'color': '#000000'
+            }
+
+            c_max = 10
+            channel_idx = 0
+            date_time = datetime.datetime.now(datetime.timezone.utc)
+            curr_channel = start_channel
 
             print("Starting channels:")
-            for ch in channel_list:
-                self.display_channel_info(ch)
+            for ch_ in channels:
+                print(ch_.title if hasattr(ch_, 'title') else ch_.first_name)
+                self.update({
+                    'nodes': [{
+                        'id': ch_.id,
+                        'label': ch_.title,
+                        'size': 10,
+                        'color': {
+                            'border': '#ff0000'
+                        }
+                    }],
+                    'edges': []
+                })
+                self.add_node_list({'label': ch_.title})
             print("")
+            print("New channel: " + (curr_channel.title if hasattr(curr_channel, 'title') else curr_channel.first_name))
 
-            await self.process_channels(client, channel_list, channels_dict, start_channel)
+            while True:
+                hist = (await asyncio.gather(client(get_history(curr_channel, date_time))))[0]
 
-    def init_channel_dict(self, channel, depth):
-        return {
-            'out': [],
-            'in': [],
-            'msg_count': -1,
-            'users': {},
-            'title': channel.title,
-            'depth': depth,
-            'color': '#000000'
-        }
+                if curr_channel.id not in channels_dict:
+                    channels_dict[curr_channel.id] = {
+                        'out': [],
+                        'in': [],
+                        'msg_count': -1,
+                        'users': {},
+                        'title': curr_channel.title,
+                        'depth': 0,
+                        'color': '#000000'
+                    }
 
-    def display_channel_info(self, ch):
-        print(ch.title if hasattr(ch, 'title') else ch.first_name)
-        self.update({
-            'nodes': [{'id': ch.id, 'label': ch.title, 'size': 10, 'color': {'border': '#ff0000'}}],
-            'edges': []
-        })
-        self.add_node_list({'label': ch.title})
+                channels_dict[curr_channel.id]['msg_count'] = hist.count
 
-    async def process_channels(self, client, channel_list, channels_dict, curr_channel):
-        channel_idx = 0
-        date_time = datetime.datetime.now(datetime.timezone.utc)
+                for user in hist.users:
+                    channels_dict[curr_channel.id]['users'][user.id] = user.first_name
 
-        while True:
-            if curr_channel.id not in channels_dict:
-                channels_dict[curr_channel.id] = self.init_channel_dict(curr_channel, 0)
+                for msg in hist.messages:
+                    if msg.date < self.from_date:
+                        date_time = msg.date
+                        break
+                    if msg.fwd_from and hasattr(msg.fwd_from.from_id, 'channel_id'):
+                        try:
+                            ch_ = (await asyncio.gather(client.get_entity(msg.fwd_from.from_id)))[0]
+                        except ChannelPrivateError:
+                            continue
 
-            hist = await client(self.get_history(curr_channel, date_time))
-            channels_dict[curr_channel.id]['msg_count'] = hist.count
-            await self.process_history(client, hist, channels_dict, curr_channel)
+                        if channels_dict[curr_channel.id]['depth'] < self.max_depth and ch_ not in channels:
+                            channels.append(ch_)
+                            print("New channel found: " + ch_.title)
+                            self.add_node_list({'label': ch_.title})
 
-            if len(hist.messages) < 100 or date_time < self.from_date:
-                channel_idx += 1
-                self.remove_node_list()
+                        if ch_.id not in channels_dict.keys():
+                            channels_dict[ch_.id] = {
+                                'out': [curr_channel.id],
+                                'in': [],
+                                'msg_count': -1,
+                                'users': {},
+                                'title': ch_.title,
+                                'depth': channels_dict[curr_channel.id]['depth'] + 1,
+                                'color': '#000000'
+                            }
+                        else:
+                            if channels_dict[ch_.id]['depth'] > channels_dict[curr_channel.id]['depth'] + 1:
+                                channels_dict[ch_.id]['depth'] = channels_dict[curr_channel.id]['depth'] + 1
+                            channels_dict[ch_.id]['out'].append(curr_channel.id)
 
-                if channel_idx >= len(channel_list):
-                    self.update_channel_colors(curr_channel.id, '#0000ff')
-                    break
+                        channels_dict[curr_channel.id]['in'].append(ch_.id)
 
-                self.update_channel_colors(curr_channel.id, '#0000ff', channel_list[channel_idx].id, '#ff0000')
-                date_time = datetime.datetime.now(datetime.timezone.utc)
-                curr_channel = channel_list[channel_idx]
-                print("")
-                print("New channel: " + (curr_channel.title if hasattr(curr_channel, 'title') else curr_channel.first_name))
-            else:
-                date_time = hist.messages[-1].date
+                        c = len(channels_dict[ch_.id]['out'])
 
-    async def process_history(self, client, hist, channels_dict, curr_channel):
-        for user in hist.users:
-            channels_dict[curr_channel.id]['users'][user.id] = user.first_name
+                        if c > 1 and channels_dict[curr_channel.id]['color'] == '#000000':
+                            channels_dict[curr_channel.id]['color'] = "#%02x%02x%02x" % self.next_color()
 
-        for msg in hist.messages:
-            if msg.date < self.from_date:
-                break
-            if msg.fwd_from and hasattr(msg.fwd_from.from_id, 'channel_id'):
-                ch_ = await self.get_forwarded_channel(client, msg)
-                if ch_:
-                    self.update_channel_data(channels_dict, curr_channel, ch_)
+                        data = {
+                            'nodes': [{
+                                'id': ch_.id,
+                                'label': ch_.title,
+                                'size': math.pow(len(channels_dict[ch_.id]['out']), 1 / 1.9) + 10
+                            }],
+                            'edges': [{
+                                'id': '{}{}'.format(curr_channel.id, ch_.id),
+                                'from': ch_.id,
+                                'to': curr_channel.id,
+                                'color': channels_dict[ch_.id]['color']
+                                if c > len(channels_dict[curr_channel.id]['out'])
+                                else channels_dict[curr_channel.id]['color']
+                            }]
+                        }
 
-    async def get_forwarded_channel(self, client, msg):
-        try:
-            return await client.get_entity(msg.fwd_from.from_id)
-        except errors.ChannelPrivateError:
-            return None
+                        self.update(data)
 
-    def update_channel_data(self, channels_dict, curr_channel, ch_):
-        if ch_.id not in channels_dict:
-            channels_dict[ch_.id] = self.init_channel_dict(ch_, channels_dict[curr_channel.id]['depth'] + 1)
-        channels_dict[ch_.id]['out'].append(curr_channel.id)
-        channels_dict[curr_channel.id]['in'].append(ch_.id)
+                if len(hist.messages) < 100 or date_time < self.from_date:
+                    channel_idx += 1
+                    self.remove_node_list()
 
-        c = len(channels_dict[ch_.id]['out'])
-        if c > 1 and channels_dict[curr_channel.id]['color'] == '#000000':
-            channels_dict[curr_channel.id]['color'] = "#%02x%02x%02x" % self.next_color()
+                    if channel_idx >= len(channels):
+                        self.update({
+                            'nodes': [
+                                {
+                                    'id': curr_channel.id,
+                                    'color': {
+                                        'border': '#0000ff'
+                                    }
+                                }]
+                        })
+                        break
 
-        data = {
-            'nodes': [{'id': ch_.id, 'label': ch_.title, 'size': math.pow(c, 1 / 1.9) + 10}],
-            'edges': [{
-                'id': '{}{}'.format(curr_channel.id, ch_.id),
-                'from': ch_.id,
-                'to': curr_channel.id,
-                'color': channels_dict[ch_.id]['color'] if c > len(channels_dict[curr_channel.id]['out']) else channels_dict[curr_channel.id]['color']
-            }]
-        }
-        self.update(data)
-
-    def update_channel_colors(self, curr_id, curr_color, next_id=None, next_color=None):
-        nodes = [{'id': curr_id, 'color': {'border': curr_color}}]
-        if next_id:
-            nodes.append({'id': next_id, 'color': {'border': next_color}})
-        self.update({'nodes': nodes})
-
-    def get_history(self, ch, dt):
-        return functions.messages.GetHistoryRequest(
-            peer=ch,
-            offset_id=0,
-            offset_date=dt,
-            add_offset=0,
-            limit=100,
-            max_id=0,
-            min_id=0,
-            hash=0
-        )
-
-    async def get_channels(self, keyword):
-        async with TelegramClient('anon', self.api_id, self.api_hash) as client:
-            result = await client(functions.contacts.SearchRequest(q=keyword, limit=2))
-            return [channel for channel in result.chats]
-
+                    self.update({
+                        'nodes': [
+                            {
+                                'id': curr_channel.id,
+                                'color': {
+                                    'border': '#0000ff'
+                                }
+                            },
+                            {
+                                'id': channels[channel_idx].id,
+                                'color': {
+                                    'border': '#ff0000'
+                                }
+                            }]
+                    })
+                    date_time = datetime.datetime.now(datetime.timezone.utc)
+                    curr_channel = channels[channel_idx]
+                    print("")
+                    print("New channel: " + (curr_channel.title if hasattr(curr_channel, 'title') else curr_channel.first_name))
+                else:
+                    date_time = hist.messages[-1].date
     def run(self):
-        keywords = [
-            '$PEPE', '$BRETT', '$ANDY', '$LANDWOLF',
-            '$TURBO', '$MYRO', '$HOPPY', '$WIF',
-            '$MANEKI', '$FOXY', '$MAGA', '$LFGO', '$POLA',
-        ]
-
-        channel_list = []
-        for keyword in keywords:
-            channel_list += asyncio.run(self.get_channels(keyword))
+        # sleep(1)
+        
+        # self.update({
+        #     'nodes': [{
+        #         'id': 15,
+        #         'label': "ch_.title"
+        #     }],
+        #     'edges': [{
+        #         'id': '{}{}'.format(15, 1),
+        #         'from': 1,
+        #         'to': 15
+        #     }]
+        # })
 
         while True:
             sleep(5)
             try:
-                asyncio.run(self.scan(channel_list))
-            except (errors.rpcerrorlist.PhoneNumberInvalidError, errors.rpcerrorlist.AccessTokenInvalidError) as e:
+                asyncio.run(self.scan())
+            except (rpcerrorlist.PhoneNumberInvalidError, rpcerrorlist.AccessTokenInvalidError) as e:
                 print(e.message)
                 pass
+                
