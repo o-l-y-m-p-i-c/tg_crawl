@@ -19,13 +19,10 @@ from moduls import Server
 
 max_depth = 2
 
-# api_id = 22222967
-# api_hash = 'fe6a3f18e0ceb89afd2527b7ff0f1c47'
+api_id = 123
+api_hash = 'api_hash'
 
-api_id = 27426964
-api_hash = 'dd1ee07cbf165e7bdd64d85361f7b209'
-
-bot_token = '5537403980:AAHHNHA4jAichW7bxck8by3cIohNscC4-gQ'
+bot_token = 'bot_token'
 
 bot = TelegramClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
