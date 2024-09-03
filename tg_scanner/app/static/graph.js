@@ -6,7 +6,9 @@ export default class Graph extends React.Component {
 
     this.container = document.getElementById("graph");
 
-    this. sio = io.connect('https://' + document.domain + ':' + location.port + '/graph'):
+    this.sio = io.connect(
+      "https://" + document.domain + ":" + location.port + "/graph"
+    );
 
     let nodes = new vis.DataSet();
 
