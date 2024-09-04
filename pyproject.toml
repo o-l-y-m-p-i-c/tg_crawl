@@ -14,6 +14,7 @@ Flask = "^1.1.2"
 Telethon = "^1.27.0"
 numpy = "^1.24.2"
 markupsafe = "2.0.1"
+requests = "2.21.0"
 
 [tool.poetry.scripts]
 main = "tg_scanner.main:main"
