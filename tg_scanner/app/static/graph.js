@@ -44,7 +44,7 @@ export default class Graph extends React.Component {
           // springConstant: 0.095,
           // damping: 0.63,
           // avoidOverlap: 0.1,
-          gravitationalConstant: -17500,
+          gravitationalConstant: -12000,
           centralGravity: 0.3,
           springLength: 1, // Increased from 50
           springConstant: 0.01,
