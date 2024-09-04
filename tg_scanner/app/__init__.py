@@ -13,7 +13,7 @@ class App(threading.Thread):
         super().__init__()
         self.app = Flask(__name__)
         # self.socketio = SocketIO(self.app)
-        self.socketio = SocketI0(self.app, cors_allowed_origins="*")
+        self.socketio = SocketIO(self.app, cors_allowed_origins="*")
 
     def register_views(self):
         # Register all Views per Namespace

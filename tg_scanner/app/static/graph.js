@@ -25,20 +25,36 @@ export default class Graph extends React.Component {
       layout: {
         randomSeed: 1,
         improvedLayout: true,
+        hierarchical: {
+          enabled: false,
+          levelSeparation: 150,
+          nodeSpacing: 100,
+          treeSpacing: 200,
+        },
       },
+
       physics: {
         stabilization: {
           iterations: 2,
         },
         barnesHut: {
-          gravitationalConstant: -100000,
-          centralGravity: 0.5,
-          springLength: 50,
-          springConstant: 0.095,
-          damping: 0.63,
-          avoidOverlap: 0.1,
+          // gravitationalConstant: -100000,
+          // centralGravity: 0.5,
+          // springLength: 50,
+          // springConstant: 0.095,
+          // damping: 0.63,
+          // avoidOverlap: 0.1,
+          gravitationalConstant: -17500,
+          centralGravity: 0.3,
+          springLength: 1, // Increased from 50
+          springConstant: 0.01,
+          damping: 0.09,
+          avoidOverlap: 0.1, // Increased from 0.1
         },
-        minVelocity: 0.75,
+        minVelocity: 0.25,
+        repulsion: {
+          nodeDistance: 100, // Put more distance between the nodes.
+        },
       },
       interaction: {
         zoomSpeed: 0.3,
@@ -54,9 +70,16 @@ export default class Graph extends React.Component {
         borderWidth: 2,
       },
       edges: {
-        width: 2,
+        width: 1,
         color: "#000000",
         smooth: { type: "continuous" },
+        arrows: {
+          to: {
+            enabled: true,
+            scaleFactor: 1,
+            type: "arrow",
+          },
+        },
       },
       groups: {
         enablingSelected: {
@@ -83,6 +106,7 @@ export default class Graph extends React.Component {
   register_events() {
     let g = this;
     this.sio.on("update_graph", function (data) {
+      console.log(data);
       for (const [key, value] of Object.entries(data.nodes)) {
         g.update_node({
           id: key,
@@ -126,6 +150,7 @@ export default class Graph extends React.Component {
 
   add_node() {
     try {
+      console.log("New node", this.data.nodes);
       this.data.nodes.add({
         id: data.id,
         label: data.label,
@@ -137,9 +162,21 @@ export default class Graph extends React.Component {
 
   update_node(data) {
     try {
-      this.data.nodes.update({
-        ...data,
-      });
+      console.log("update_node", data);
+      if (data && data?.image) {
+        this.data.nodes.update({
+          ...data,
+          shape: "circularImage",
+        });
+      } else {
+        let newData = {};
+        Object.keys(data).forEach((key) => {
+          if (key !== "image") newData[key] = data[key];
+        });
+        this.data.nodes.update({
+          ...newData,
+        });
+      }
     } catch (err) {
       alert(err);
     }

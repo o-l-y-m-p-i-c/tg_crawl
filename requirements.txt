@@ -3,3 +3,4 @@ flask-classful
 Flask~=1.1.2
 Telethon~=1.24.0
 numpy~=1.22.1
+requests==2.21.0
