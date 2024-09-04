@@ -99,14 +99,12 @@ def get_image_from_api(entity):
     if not hasattr(entity, 'username'):
         return None
 
-    print('entity.username',entity.username)
     url = f"https://core-api.privateai.com/social/telegram/profilePhoto/@{entity.username}"
 
     try:
         response = requests.get(url, stream=True)
-        response.raise_for_status()  # Raise an exception for bad status codes
+        response.raise_for_status()
         
-        # Check if the content type is an image
         content_type = response.headers.get('Content-Type', '')
         if content_type.startswith('image/'):
             return url
