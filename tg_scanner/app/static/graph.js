@@ -30,9 +30,9 @@ export default class Graph extends React.Component {
         improvedLayout: true,
         hierarchical: {
           enabled: false,
-          levelSeparation: 150,
-          nodeSpacing: 100,
-          treeSpacing: 200,
+          levelSeparation: 250,
+          nodeSpacing: 200,
+          treeSpacing: 300,
         },
       },
 
@@ -41,22 +41,22 @@ export default class Graph extends React.Component {
           iterations: 2,
         },
         barnesHut: {
-          // gravitationalConstant: -100000,
-          // centralGravity: 0.5,
-          // springLength: 50,
-          // springConstant: 0.095,
-          // damping: 0.63,
-          // avoidOverlap: 0.1,
-          gravitationalConstant: -15000,
-          centralGravity: 0.3,
-          springLength: 1, // Increased from 50
-          springConstant: 0.01,
-          damping: 0.09,
-          avoidOverlap: 0.1, // Increased from 0.1
+          gravitationalConstant: -50000,
+          centralGravity: 0.5,
+          springLength: 50,
+          springConstant: 0.095,
+          damping: 0.63,
+          avoidOverlap: 0.1,
+          // gravitationalConstant: -25000,
+          // centralGravity: 1.3,
+          // springLength: 10, // Increased from 50
+          // springConstant: 0.1,
+          // damping: 1.09,
+          // avoidOverlap: 1, // Increased from 0.1
         },
-        minVelocity: 0.25,
+        minVelocity: 1.25,
         repulsion: {
-          nodeDistance: 100, // Put more distance between the nodes.
+          nodeDistance: 200, // Put more distance between the nodes.
         },
       },
       interaction: {
@@ -64,7 +64,7 @@ export default class Graph extends React.Component {
       },
       nodes: {
         shape: "dot",
-        size: 30,
+        size: 20,
         font: {
           size: 12,
           color: "#ffffff",
