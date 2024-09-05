@@ -230,7 +230,7 @@ class TGScanner(threading.Thread):
                 'users': {},
                 'title': start_channel.title,
                 'depth': 0,
-                'color': '#000000'
+                'color': '#ffffff'
             }
 
             c_max = 10
@@ -256,7 +256,9 @@ class TGScanner(threading.Thread):
                         'nodes': [{
                             'id': ch_.id,
                             'label': ch_.title,
+                            'telegram_username': ch_.username,
                             'image': image_url,
+                            'telegram_username': ch_.username,
                             'size': 30,
                             'color': {
                                 'border': '#ff0000'
@@ -269,6 +271,7 @@ class TGScanner(threading.Thread):
                         'nodes': [{
                             'id': ch_.id,
                             'label': ch_.title,
+                            'telegram_username': ch_.username,
                             'size': 30,
                             'color': {
                                 'border': '#ff0000'
@@ -291,7 +294,7 @@ class TGScanner(threading.Thread):
                         'users': {},
                         'title': curr_channel.title,
                         'depth': 0,
-                        'color': '#000000'
+                        'color': '#ffffff'
                     }
 
                 channels_dict[curr_channel.id]['msg_count'] = hist.count
@@ -323,7 +326,7 @@ class TGScanner(threading.Thread):
                                 'users': {},
                                 'title': ch_.title,
                                 'depth': channels_dict[curr_channel.id]['depth'] + 1,
-                                'color': '#000000'
+                                'color': '#ffffff'
                             }
                         else:
                             if channels_dict[ch_.id]['depth'] > channels_dict[curr_channel.id]['depth'] + 1:
@@ -344,6 +347,7 @@ class TGScanner(threading.Thread):
                                 'nodes': [{
                                     'id': ch_.id,
                                     'label': ch_.title,
+                                    'telegram_username': ch_.username,
                                     'image':image_url,
                                     'size': math.pow(len(channels_dict[ch_.id]['out']), 1 / 1.9) + 30
                                 }],
@@ -361,6 +365,7 @@ class TGScanner(threading.Thread):
                                 'nodes': [{
                                     'id': ch_.id,
                                     'label': ch_.title,
+                                    'telegram_username': ch_.username,
                                     'size': math.pow(len(channels_dict[ch_.id]['out']), 1 / 1.9) + 30
                                 }],
                                 'edges': [{
