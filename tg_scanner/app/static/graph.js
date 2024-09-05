@@ -1,6 +1,9 @@
 // import Graph from 'react-graph-vis';
 
 export default class Graph extends React.Component {
+  network = null;
+  isLoaded = false;
+
   constructor(props) {
     super(props);
 
@@ -44,7 +47,7 @@ export default class Graph extends React.Component {
           // springConstant: 0.095,
           // damping: 0.63,
           // avoidOverlap: 0.1,
-          gravitationalConstant: -12000,
+          gravitationalConstant: -15000,
           centralGravity: 0.3,
           springLength: 1, // Increased from 50
           springConstant: 0.01,
@@ -71,13 +74,13 @@ export default class Graph extends React.Component {
       },
       edges: {
         width: 1,
-        color: "#000000",
+        color: "#ffffff",
         smooth: { type: "continuous" },
         arrows: {
           to: {
             enabled: true,
             scaleFactor: 1,
-            type: "arrow",
+            type: "triangle",
           },
         },
       },
@@ -101,12 +104,14 @@ export default class Graph extends React.Component {
     };
 
     this.register_events();
+
+    // this.click_handler(this.network);
   }
 
   register_events() {
     let g = this;
     this.sio.on("update_graph", function (data) {
-      console.log(data);
+      // console.log(data);
       for (const [key, value] of Object.entries(data.nodes)) {
         g.update_node({
           id: key,
@@ -150,7 +155,7 @@ export default class Graph extends React.Component {
 
   add_node() {
     try {
-      console.log("New node", this.data.nodes);
+      // console.log("New node", this.data.nodes);
       this.data.nodes.add({
         id: data.id,
         label: data.label,
@@ -162,7 +167,7 @@ export default class Graph extends React.Component {
 
   update_node(data) {
     try {
-      console.log("update_node", data);
+      // console.log("update_node", data);
       if (data && data?.image) {
         this.data.nodes.update({
           ...data,
@@ -220,12 +225,54 @@ export default class Graph extends React.Component {
     }
   }
 
+  click_handler(network) {
+    if (!network) return;
+    network.on("click", function (properties) {
+      var ids = properties.nodes;
+      // var clickedNodes = this.data.nodes.get(ids);
+      var telegram_username =
+        network.nodesHandler.body.nodes[ids]?.options.telegram_username;
+
+      if (telegram_username) {
+        document.querySelector("dialog").showModal();
+        document
+          .querySelector(".open-btn")
+          .setAttribute("href", `https:/t.me/${telegram_username}`);
+        // window.open(`https:/t.me/${telegram_username}`, "_blank");
+        document.querySelector("#tg_name").innerHTML = "@" + telegram_username;
+      }
+    });
+  }
+  hover_handler(network) {
+    network.on("hoverNode", function (params) {
+      this.changeCursor("pointer");
+      // network.canvas.body.container.style.cursor = "pointer";
+    });
+    network.on("blurNode", function (params) {
+      this.changeCursor("default");
+      // network.canvas.body.container.style.cursor = "default";
+    });
+  }
+
+  changeCursor(newCursorStyle) {
+    var networkCanvas = document
+      .querySelector(".vis-network")
+      .getElementsByTagName("canvas")[0];
+    networkCanvas.style.cursor = newCursorStyle;
+  }
+
   draw() {
-    return new vis.Network(this.container, this.data, this.options);
+    this.network = new vis.Network(this.container, this.data, this.options);
+    return this.network;
   }
 
   render() {
-    this.draw();
+    const network = this.draw();
+    // if (!this.isLoaded) {
+    // this.isLoaded = true;
+    this.click_handler(network);
+    this.hover_handler(network);
+    // }
     return "";
   }
 }

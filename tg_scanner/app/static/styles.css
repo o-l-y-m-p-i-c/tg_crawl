@@ -39,7 +39,8 @@
 }
 
 .wrap {
-  background-color: rgba(150, 150, 150, 0.81);
+  background-color: rgb(43, 32, 72);
+  /* rgba(150, 150, 150, 0.81); */
   padding: 0px;
   border-radius: 10px;
   color: white;
@@ -90,7 +91,7 @@
 }
 
 .toggle-button:hover {
-  background-color: #8d8d8d;
+  background-color: rgb(31, 23, 52);
 }
 
 .toggle-button .toggle-button__icon {
@@ -136,6 +137,7 @@
 }
 
 .button-1 {
+  white-space: nowrap;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -159,7 +161,8 @@
   border-radius: 10px;
   border-width: 1px;
   box-shadow: 0 0px 5px rgba(255, 255, 255, 0.457);
-  background-color: rgba(150, 150, 150, 0.81);
+  background-color: rgb(43, 32, 72);
+  /* rgba(150, 150, 150, 0.81); */
   color: white;
 }
 
@@ -190,15 +193,43 @@ menu {
 .open-btn {
   background-color: white;
   border-color: white;
-  color: rgb(150, 150, 150);
+  color: rgb(43, 32, 72);
 }
 
 .close-btn {
-  border-color: white;
+  position: relative;
+  /* top: 9px; */
+  /* right: 9px; */
+  /* border-radius: 100%; */
+  background: transparent;
+  border-color: transparent;
   color: white;
+  /* width: 30px; */
+  /* height: 30px; */
+}
+
+.close-btn svg {
+  fill: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .button-1:hover {
   /* scale: 1.02; */
   opacity: 0.8;
+}
+
+#favDialog form {
+  /* padding-right: 30px; */
+}
+
+#favDialog form {
+  /* margin-right: 30px; */
+}
+
+#favDialog menu {
+  display: flex;
+  flex-wrap: wrap;
 }
