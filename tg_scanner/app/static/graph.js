@@ -237,7 +237,7 @@ export default class Graph extends React.Component {
         document.querySelector("dialog").showModal();
         document
           .querySelector(".open-btn")
-          .setAttribute("href", `https:/t.me/${telegram_username}`);
+          .setAttribute("href", `https://t.me/${telegram_username}`);
         // window.open(`https:/t.me/${telegram_username}`, "_blank");
         document.querySelector("#tg_name").innerHTML = "@" + telegram_username;
       }
