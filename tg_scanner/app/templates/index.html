@@ -347,9 +347,11 @@
 
     <!-- <canvas class="canvas-background"></canvas> -->
     <div id="root"></div>
-    <div id="graph"></div>
 
-    <div class="wrap" style="transition: all 0.3s ease-out">
+    <div
+      class="wrap"
+      style="transition: all 0.3s ease-out; transform: translateY(50px)"
+    >
       <div class="">
         <button style="width: 100%" class="toggle-button">
           <span class="toggle-button__label title"> Details </span>
@@ -493,8 +495,9 @@
       //   e.target.closest("dialog").close();
       // }
       let showFlag = false;
-      const wrap = document.querySelector(".wrap");
+      // const wrap = document.querySelector(".wrap");
       const toggleBtn = document.querySelector(".toggle-button");
+      const wrap = toggleBtn.closest(".wrap");
 
       const wrapWidth = wrap.getBoundingClientRect().width;
 

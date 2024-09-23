@@ -1,11 +1,15 @@
 // import Graph from 'react-graph-vis';
 
+let propsValue = "";
+
 export default class Graph extends React.Component {
   network = null;
   isLoaded = false;
+  propsValue = null;
 
   constructor(props) {
     super(props);
+    this.containerRef = React.createRef();
 
     this.container = document.getElementById("graph");
 
@@ -41,7 +45,7 @@ export default class Graph extends React.Component {
           iterations: 2,
         },
         barnesHut: {
-          gravitationalConstant: -50000,
+          gravitationalConstant: -100000,
           centralGravity: 0.5,
           springLength: 50,
           springConstant: 0.095,
@@ -108,6 +112,43 @@ export default class Graph extends React.Component {
     // this.click_handler(this.network);
   }
 
+  checker(g, value, data) {
+    // trim
+
+    console.log(value, data);
+    if (g.props.title !== "") {
+      g.data.nodes.forEach((item) => {
+        g.update_node({
+          ...item,
+          opacity:
+            item?.msg &&
+            item.msg.toLowerCase().includes(g.props.title.toLowerCase())
+              ? 1
+              : 0.3,
+        });
+      });
+      g.data.edges.forEach((item) => {
+        g.update_edge({
+          ...item,
+          color: "#ffffff30",
+        });
+      });
+    } else {
+      g.data.nodes.forEach((item) => {
+        g.update_node({
+          ...item,
+          opacity: 1,
+        });
+      });
+      g.data.edges.forEach((item) => {
+        g.update_edge({
+          ...item,
+          color: "#fff",
+        });
+      });
+    }
+  }
+
   register_events() {
     let g = this;
     this.sio.on("update_graph", function (data) {
@@ -125,6 +166,7 @@ export default class Graph extends React.Component {
             ...value,
           });
         }
+      g.checker(g, propsValue, data);
     });
 
     let left = $("#node-count-left");
@@ -155,7 +197,6 @@ export default class Graph extends React.Component {
 
   add_node() {
     try {
-      // console.log("New node", this.data.nodes);
       this.data.nodes.add({
         id: data.id,
         label: data.label,
@@ -167,7 +208,6 @@ export default class Graph extends React.Component {
 
   update_node(data) {
     try {
-      // console.log("update_node", data);
       if (data && data?.image) {
         this.data.nodes.update({
           ...data,
@@ -262,17 +302,26 @@ export default class Graph extends React.Component {
   }
 
   draw() {
-    this.network = new vis.Network(this.container, this.data, this.options);
+    this.network = new vis.Network(
+      this.containerRef.current,
+      this.data,
+      this.options
+    );
     return this.network;
   }
 
-  render() {
+  componentDidMount() {
     const network = this.draw();
-    // if (!this.isLoaded) {
-    // this.isLoaded = true;
+    propsValue = this.props.title;
+
     this.click_handler(network);
     this.hover_handler(network);
-    // }
-    return "";
+  }
+
+  render() {
+    return React.createElement("div", {
+      className: "graph",
+      ref: this.containerRef,
+    });
   }
 }

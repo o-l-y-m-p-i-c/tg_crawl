@@ -256,9 +256,9 @@ class TGScanner(threading.Thread):
                         'nodes': [{
                             'id': ch_.id,
                             'label': ch_.title,
+                            'msg':str(ch_.title)  + str(ch_.username),
                             'telegram_username': ch_.username,
                             'image': image_url,
-                            'telegram_username': ch_.username,
                             'size': 30,
                             'color': {
                                 'border': '#ff0000'
@@ -271,6 +271,7 @@ class TGScanner(threading.Thread):
                         'nodes': [{
                             'id': ch_.id,
                             'label': ch_.title,
+                            'msg':str(ch_.title) + str(ch_.username),
                             'telegram_username': ch_.username,
                             'size': 30,
                             'color': {
@@ -348,6 +349,7 @@ class TGScanner(threading.Thread):
                                     'id': ch_.id,
                                     'label': ch_.title,
                                     'telegram_username': ch_.username,
+                                    'msg':msg.message + str(ch_.title) + str(ch_.username),
                                     'image':image_url,
                                     'size': math.pow(len(channels_dict[ch_.id]['out']), 1 / 1.9) + 30
                                 }],
@@ -365,6 +367,7 @@ class TGScanner(threading.Thread):
                                 'nodes': [{
                                     'id': ch_.id,
                                     'label': ch_.title,
+                                    'msg':msg.message + str(ch_.title) + str(ch_.username),
                                     'telegram_username': ch_.username,
                                     'size': math.pow(len(channels_dict[ch_.id]['out']), 1 / 1.9) + 30
                                 }],
