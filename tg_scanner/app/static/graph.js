@@ -14,7 +14,7 @@ export default class Graph extends React.Component {
     this.container = document.getElementById("graph");
 
     this.sio = io.connect(
-      "https://" + document.domain + ":" + location.port + "/graph"
+      "http://" + document.domain + ":" + location.port + "/graph"
     );
 
     let nodes = new vis.DataSet();
@@ -166,7 +166,7 @@ export default class Graph extends React.Component {
             ...value,
           });
         }
-      g.checker(g, propsValue, data);
+      // g.checker(g, propsValue, data);
     });
 
     let left = $("#node-count-left");
