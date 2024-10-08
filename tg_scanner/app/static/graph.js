@@ -208,7 +208,7 @@ export default class Graph extends React.Component {
 
   update_node(data) {
     try {
-      if (data && data?.image && false) {
+      if (data && data?.image) {
         this.data.nodes.update({
           ...data,
           shape: "circularImage",
