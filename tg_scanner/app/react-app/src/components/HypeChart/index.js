@@ -1,1 +1,0 @@
-export { HypeChart } from './HypeChart';

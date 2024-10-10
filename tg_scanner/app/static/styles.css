@@ -1,0 +1,235 @@
+.vis-network {
+  /* background-color: #222222; */
+}
+
+.canvas-background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.wrap {
+  --vertical-space: 20px;
+  --horizontal-space: 20px;
+  z-index: 1000;
+  position: absolute;
+  top: var(--vertical-space);
+  right: var(--horizontal-space);
+  /* pointer-events: none; */
+  width: 250px;
+  overflow: hidden;
+  height: 35px;
+  max-height: calc(100% - var(--vertical-space) * 2 - 20px);
+  max-width: calc(100% - var(--horizontal-space) * 2 - 20px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  font-size: 11px;
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+}
+
+.wrap.open {
+  height: 300px;
+}
+
+.wrap {
+  background-color: rgb(43, 32, 72);
+  /* rgba(150, 150, 150, 0.81); */
+  padding: 0px;
+  border-radius: 10px;
+  color: white;
+  /* mix-blend-mode: difference; */
+  border: 1px solid white;
+  box-shadow: 0 0 10px 0px rgba(255, 255, 255, 0.4);
+}
+
+#node-list {
+  overflow-y: auto;
+  height: auto;
+  padding-left: 0px;
+  margin: 0;
+  padding: 10px;
+  /* border-radius: 10px; */
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-bottom: -10px;
+  border-top: 1px solid white;
+  /* border: 1px solid white; */
+}
+
+#node-list li {
+  margin-left: 10px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.toggle-button {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  background-color: transparent;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px;
+  color: white;
+  border-bottom: 1px solid white;
+  transition: all 0.1s ease-out;
+}
+
+.toggle-button:hover {
+  background-color: rgb(31, 23, 52);
+}
+
+.toggle-button .toggle-button__icon {
+  scale: -1;
+  transition: all 0.3s ease;
+}
+
+.toggle-button.active .toggle-button__icon {
+  scale: 1;
+}
+
+.toggle-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.toggle-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+#node-list {
+  flex: 1;
+}
+
+.node-list__wrap {
+  margin-top: 10px;
+  /* flex: 1; */
+  height: 178px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#node-list {
+  overflow: unset;
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-1 {
+  white-space: nowrap;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 10px 20px;
+  border: 1px solid black;
+  border-radius: 14px;
+  background-color: transparent;
+  cursor: pointer;
+  flex: 1;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 0px 4px rgba(255, 255, 255, 0.425);
+  scale: 1;
+  opacity: 1;
+  transition: all 0.2s ease-out;
+}
+
+#favDialog {
+  text-align: center;
+  border-radius: 10px;
+  border-width: 1px;
+  box-shadow: 0 0px 5px rgba(255, 255, 255, 0.457);
+  background-color: rgb(43, 32, 72);
+  /* rgba(150, 150, 150, 0.81); */
+  color: white;
+}
+
+#favDialog * {
+  margin: 0px;
+  font-family: "Open Sans", sans-serif;
+}
+
+#favDialog h3,
+#favDialog h4 {
+  margin-bottom: 10px;
+  text-align: balanced;
+  text-wrap: balance;
+}
+
+#favDialog h4 {
+  margin: 20px 0;
+  margin-bottom: 30px;
+  text-decoration: underline;
+}
+
+menu {
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.open-btn {
+  background-color: white;
+  border-color: white;
+  color: rgb(43, 32, 72);
+}
+
+.close-btn {
+  position: relative;
+  /* top: 9px; */
+  /* right: 9px; */
+  /* border-radius: 100%; */
+  background: transparent;
+  border-color: transparent;
+  color: white;
+  /* width: 30px; */
+  /* height: 30px; */
+}
+
+.close-btn svg {
+  fill: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.button-1:hover {
+  /* scale: 1.02; */
+  opacity: 0.8;
+}
+
+#favDialog form {
+  /* padding-right: 30px; */
+}
+
+#favDialog form {
+  /* margin-right: 30px; */
+}
+
+#favDialog menu {
+  display: flex;
+  flex-wrap: wrap;
+}

@@ -1,5 +1,0 @@
-# React app
-
-npm
-
-## Important
