@@ -1,0 +1,1 @@
+export { HypeChart } from './HypeChart';

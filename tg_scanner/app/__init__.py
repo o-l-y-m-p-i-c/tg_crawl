@@ -12,6 +12,7 @@ class App(threading.Thread):
     def __init__(self):
         super().__init__()
         self.app = Flask(__name__)
+        
         # self.socketio = SocketIO(self.app)
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
 
