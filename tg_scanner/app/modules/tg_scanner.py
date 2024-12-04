@@ -211,6 +211,7 @@ class TGScanner(threading.Thread):
                 "t.me/crypto",
                 "t.me/cryptobosh",
                 "t.me/Cryptoy",
+                "t.me/MEMEcrypted",
             ]
 
             channels = []
